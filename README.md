@@ -78,20 +78,20 @@ LSTM 기반 감성 분류 모델과 이 모델의 attention에 대한 설명은 
     Attention 사용한 모델: 0.884720<br><br>
 
     * 감성 분류 결과 샘플<br>
-        ```
+        <pre style="white-space: pre-wrap; word-break: break-word;">
+        <code>
         i saw [UNK] on broadway and liked it a great deal i don't know what happened with the film version because it was dreadful perhaps some dialogue that works on stage just sounds incoherent on screen anyway i couldn't wait for this film to be over the acting is universally over the top only kevin spacey has it together and he seems like he knows he's in a bad movie and can't wait to get out
         ******************************************
         It is negative with a probability of 0.784
         ground truth: 0.0
-        ******************************************
-
-
+        ******************************************<br><br>
         how do these guys keep going they're about 50 years old each and act as if they're only 30 they play 3 hours of music at every concert and barely break a sweat this dvd is their first concert in [UNK] brazil although the people don't speak english they try to [UNK] the words to the most famous rush songs and try to sing a foreign language at the concert with their best friends from tom [UNK] to the spirit of radio this concert dvd will keep you in the chair not wanting to pause or move away from the classics that you've listened to when you were young this is their [UNK] reunion tour started in 1974 i went to their [UNK] [UNK] concert and this was just as good although in [UNK] they didn't play [UNK] so i was upset they have [UNK] they have the trees they have [UNK] the pass driven [UNK] red [UNK] a [UNK] roll the bones [UNK] and much more 10 out of 10 because nothing else [UNK] if you never go to a rush concert then at least buy this dvd
         ******************************************
         It is positive with a probability of 0.961
         ground truth: 1.0
         ******************************************
-        ```
+        </code>
+        </pre>
     <br><br>
 
 
