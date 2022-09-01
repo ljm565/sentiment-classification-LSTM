@@ -77,7 +77,7 @@ LSTM 기반 감성 분류 모델과 이 모델의 attention에 대한 설명은 
     <img src="images/output3.jpg" width="80%"><br><br>
     Attention 사용한 모델: 0.884720<br><br>
 
-    * 감성 분류 결과 샘플<br>
+    * 감성 분류 결과 샘플 (ground truth: 1.0 (positive), 0.0 (negative))<br>
         ```
         i saw [UNK] on broadway and liked it a great deal i don't know what happened with the film version because it was dreadful perhaps some dialogue that works on stage just sounds incoherent on screen anyway i couldn't wait for this film to be over the acting is universally over the top only kevin spacey has it together and he seems like he knows he's in a bad movie and can't wait to get out
         ******************************************
@@ -104,7 +104,7 @@ LSTM 기반 감성 분류 모델과 이 모델의 attention에 대한 설명은 
     <img src="images/output4.jpg" width="80%"><br><br>
     Attention 사용하지 않은 모델: 0.883560<br><br>
 
-    * 감성 분류 결과 샘플<br>
+    * 감성 분류 결과 샘플 (ground truth: 1.0 (positive), 0.0 (negative))<br>
         ```
         this movie was awful plain and simple the animation scenes had absolutely terrible graphics it was very clear to see that this film had about the budget of my [UNK] bill the acting was just as bad i've seen better acting in pornographic films i would seriously like the hour and twenty minutes of my life back in fact i [UNK] on imdb just so that other people don't get sucked into watching this like i did don't get me wrong though i love scifi films this one seemed more like the intro to a video game i'm glad i only spent a dollar to see this one the story line reminded me of the movie pitch black a prisoner on a ship in outer space escapes oh my goodness what are we gonna do i would not even let this play in the background of my house while i was cleaning bottom line here you can do better
         ******************************************
