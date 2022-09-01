@@ -49,4 +49,4 @@ def visualize_attn(all_x, all_y, all_pred, all_attn, tokenizer):
     plt.title('Attention Score ({} review)'.format(sentiment[int(y)]), fontsize=20)
     plt.bar(idx, score)
     plt.xticks(idx, sentence)
-    plt.savefig('output.jpg')
+    plt.savefig('result/attention_score.jpg')
