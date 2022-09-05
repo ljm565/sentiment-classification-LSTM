@@ -133,9 +133,3 @@ LSTM 기반 감성 분류 모델과 이 모델의 attention에 대한 설명은 
 
 
 <br><br><br>
-
-
-## License
-© 2022. Jun-Min Lee. All rights reserved.<br>
-ljm56897@gmail.com, ljm565@kaist.ac.kr, ljm565@naver.com
-
