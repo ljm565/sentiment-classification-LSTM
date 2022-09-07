@@ -12,7 +12,7 @@ class DLoader(Dataset):
         self.text, self.label = [], []
         for text, label in self.data:
             self.label.append(label)
-            t = tokenizer.encode(text)[:self.max_len]
+            t = self.tokenizer.encode(text)[:self.max_len]
             t = t + [self.tokenizer.pad_token_id]*(self.max_len-len(t))
             self.text.append(t)
 
