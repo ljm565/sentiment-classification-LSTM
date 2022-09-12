@@ -14,7 +14,7 @@ LSTM 기반 감성 분류 모델과 이 모델의 attention에 대한 설명은 
 
 ## 토크나이저 종류
 * ### Word Tokenizer
-    단어 기준으로 토큰화
+    단어 기준으로 토큰화(Attention 가시화를 위함).
 <br><br><br>
 
 ## 사용 데이터
