@@ -26,7 +26,7 @@ LSTM 기반 감성 분류 모델과 이 모델의 attention에 대한 설명은 
 * ### 학습 방법
     학습을 시작하기 위한 argument는 4가지가 있습니다.<br>
     * [-d --device] {cpu, gpu}, **필수**: 학습을 cpu, gpu로 할건지 정하는 인자입니다.
-    * [-m --mode] {train, test}, **필수**: 학습을 시작하려면 train, 학습된 모델을 가지고 있어서 loss, accuracy, attention 모델일 경우 sample에 대한 attention score를 보고싶은 경우에는 test로 설정해야합니다. test를 사용할 경우, [-n, --name] 인자가 **필수**입니다.
+    * [-m --mode] {train, test}, **필수**: 학습을 시작하려면 train, 학습된 모델을 가지고 있어서 loss, accuracy, sample에 대한 attention score를 보고싶은 경우(attention 모델을 사용했을 경우)에는 test로 설정해야합니다. test를 사용할 경우, [-n, --name] 인자가 **필수**입니다.
     * [-c --cont] {1}, **선택**: 학습이 중간에 종료가 된 경우 다시 저장된 모델의 체크포인트 부분부터 학습을 시작할 수 있습니다. 이 인자를 사용할 경우 -m train 이어야 합니다. 
     * [-n --name] {name}, **선택**: 이 인자는 -c 1 혹은 -m test 경우 사용합니다.
     중간에 다시 불러서 학습을 할 경우 모델의 이름을 입력하고, test를 할 경우에도 test 할 모델의 이름을 입력해주어야 합니다(최초 학습시 config.json에서 정한 모델의 이름의 폴더가 형성되고 그 폴더 내부에 모델 및 모델 파라미터가 json 파일로 형성 됩니다).<br><br>
@@ -63,7 +63,7 @@ LSTM 기반 감성 분류 모델과 이 모델의 attention에 대한 설명은 
     * epochs: 학습 epoch 설정.
     * lr: learning rate 지정.
     * result_num: 모델 테스트 시, 결과를 보여주는 sample 개수.
-    * early_stop_criterion: validation set의 학습이 최대 accuracy 학습 epoch 대비 설정된 숫자만큼 epoch이 지나도 나아지지 않을 경우 학습 조기 종료.
+    * early_stop_criterion: validation set의 학습이 최대 accuracy를 내어준 학습 epoch 대비 설정된 숫자만큼 epoch이 지나도 나아지지 않을 경우 학습 조기 종료.
     * visualize_attn: {0, 1} 중 선택. 1이면 짧은 리뷰에 한에서 랜덤으로 하나의 리뷰를 선택하여 각 단어별 attention score 결과를 {basepath}/result 폴더에 이미지로 저장.
     <br><br><br>
 
