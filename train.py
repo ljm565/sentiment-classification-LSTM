@@ -7,6 +7,7 @@ import pickle
 from tokenizer import Tokenizer
 import numpy as np
 import time
+import sys
 
 from config import Config
 from utils_func import *
@@ -145,7 +146,7 @@ class Trainer:
     def test(self, result_num):
         if result_num > len(self.dataloaders['test'].dataset):
             print('The number of results that you want to see are larger than total test set')
-            raise AssertionError
+            sys.exit()
         
         # statistics of IMDb test set
         phase = 'test'
