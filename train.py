@@ -144,13 +144,14 @@ class Trainer:
     
 
     def test(self, result_num):
-        if result_num > len(self.dataloaders['test'].dataset):
+        phase = 'test'
+        all_x, all_y, all_attn, all_pred, ids = [], [], [], [], set()
+
+        if result_num > len(self.dataloaders[phase].dataset):
             print('The number of results that you want to see are larger than total test set')
             sys.exit()
         
         # statistics of IMDb test set
-        phase = 'test'
-        all_x, all_y, all_attn, all_pred, ids = [], [], [], [], set()
         with torch.no_grad():
             total_loss, total_acc = 0, 0
             self.model.eval()
