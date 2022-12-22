@@ -7,6 +7,7 @@ import pickle
 from tokenizer import Tokenizer
 import numpy as np
 import time
+import random
 import sys
 
 from config import Config
@@ -186,11 +187,8 @@ class Trainer:
             visualize_attn(all_x, all_y, all_pred, all_attn, self.tokenizer)
   
         # show the sample results
-        while 1:
-            if len(ids) == result_num:
-                break
-            id = np.random.randint(1, high=all_x.size(0))
-            ids.add(id)
+        while len(ids) != result_num:
+            ids.add(random.randrange(all_x.size(0)))
         ids = list(ids)
         all_x = torch.cat([all_x[id].unsqueeze(0) for id in ids], dim=0).to(self.device)
         all_y = torch.cat([all_y[id].unsqueeze(0) for id in ids], dim=0).to(self.device)
