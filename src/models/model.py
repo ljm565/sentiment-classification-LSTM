@@ -1,13 +1,11 @@
-from unicodedata import bidirectional
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from config import Config
 
 
 
 class SentimentLSTM(nn.Module):
-    def __init__(self, config:Config, pad_token_id, device):
+    def __init__(self, config, pad_token_id, device):
         super(SentimentLSTM, self).__init__()
         self.pad_token_id = pad_token_id
         self.device = device

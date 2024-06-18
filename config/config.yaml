@@ -1,0 +1,40 @@
+# base
+seed: 0
+deterministic: True
+
+# environment config
+device: cpu     # examples: [0], [0,1], [1,2,3], cpu, mps... 
+
+# project config
+project: outputs/lstm_w_attention
+name: IMDb
+
+# model config
+num_layer: 3              # Number of each residual block's layer. A model consisting of a total of (num_layer * 2 * 3 + 2) layers will be created.
+vocab_size: 10000
+max_len: 512
+hidden_dim: 768
+dropout: 0.1
+
+# data config
+workers: 0               # Don't worry to set worker. The number of workers will be set automatically according to the batch size.
+IMDb_train: True         # if True, IMDb will be loaded automatically.
+class_num: 10            # Number of image label classes.
+IMDb:
+    path: data/
+CUSTOM:
+    train_data_path: null
+    validation_data_path: null
+    test_data_path: null
+
+# train config
+batch_size: 128
+epochs: 100
+lr0: 1e-4
+patient: 4
+
+# prediction config
+result_num: 10            # number of prediction results to be shown
+
+# logging config
+common: ['train_loss', 'train_acc', 'validation_loss', 'validation_acc']

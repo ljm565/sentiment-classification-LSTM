@@ -1,27 +1,13 @@
-import torch
 import re
-import pickle
 import random
 import matplotlib.pyplot as plt
 
-
-
-def save_checkpoint(file, model, optimizer):
-    state = {'model': model.state_dict(), 'optimizer': optimizer.state_dict()}
-    torch.save(state, file)
-    print('model pt file is being saved\n')
 
 
 def preprocessing(s):
     s = s.replace('<br /><br />', ' ')
     s = re.sub('[!"#$%&()*+,-./:;<=>?@[\]^_`{|}~]', '', s).lower()
     return s
-
-
-def load_dataset(path):
-    with open(path, 'rb') as f:
-        data = pickle.load(f)
-    return data
 
 
 def visualize_attn(all_x, all_y, all_pred, all_attn, tokenizer):

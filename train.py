@@ -12,7 +12,7 @@ import sys
 
 from config import Config
 from utils_func import *
-from utils_data import DLoader
+from data_utils import DLoader
 from model import SentimentLSTM
 
 

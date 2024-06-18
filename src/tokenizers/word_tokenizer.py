@@ -1,9 +1,9 @@
 from collections import Counter
-from utils_func import preprocessing, load_dataset
+from utils.func_utils import preprocessing, load_dataset
 
 
 
-class Tokenizer:
+class WordTokenizer:
     def __init__(self, config, trainset_path):
         self.vocab_size = config.vocab_size
         self.pad_token, self.sos_token, self.unk_token = '[PAD]', '[SOS]', '[UNK]'

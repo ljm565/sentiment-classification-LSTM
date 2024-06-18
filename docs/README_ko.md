@@ -124,10 +124,10 @@ LSTM 기반 감성 분류 모델과 이 모델의 attention에 대한 설명은 
 
 * ### Sentiment Classification Attention Score 결과
     * Positive review attention score sample<br>
-    <img src="docs/figs/pos.jpg" width="80%"><br><br>
+    <img src="figs/pos.jpg" width="80%"><br><br>
 
     * Negative review attention score sample<br>
-    <img src="docs/figs/neg.jpg" width="80%"><br><br>
+    <img src="figs/neg.jpg" width="80%"><br><br>
 
 
 
