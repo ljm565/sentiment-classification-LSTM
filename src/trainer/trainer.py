@@ -9,7 +9,7 @@ import torch.optim as optim
 from torch import distributed as dist
 
 from tools import TrainingLogger
-from tokenizers import WordTokenizer
+from tools.tokenizers import WordTokenizer
 from trainer.build import get_model, get_data_loader
 from utils import RANK, LOGGER, colorstr, init_seeds
 from utils.filesys_utils import *
@@ -46,19 +46,13 @@ class Trainer:
         self.config.is_rank_zero = self.is_rank_zero
         self.resume_path = resume_path
 
-        # color channel init
-        self.convert2grayscale = True if self.config.color_channel==3 and self.config.convert2grayscale else False
-        self.color_channel = 1 if self.convert2grayscale else self.config.color_channel
-        self.config.color_channel = self.color_channel
-        
-        # sanity check
-        assert self.config.color_channel in [1, 3], colorstr('red', 'image channel must be 1 or 3, check your config..')
-
-        # init model, dataset, dataloader, etc.
+        # init tokenizer, model, dataset, dataloader, etc.
         self.modes = ['train', 'validation'] if self.is_training_mode else ['test']
-        self.model = self._init_model(self.config, self.mode)
-        self.dataloaders = get_data_loader(self.config, self.modes, self.is_ddp)
+        self.tokenizer = WordTokenizer(self.config)
+        self.dataloaders = get_data_loader(self.config, self.tokenizer, self.modes, self.is_ddp)
+        self.model = self._init_model(self.config, self.tokenizer, self.mode)
         self.training_logger = TrainingLogger(self.config, self.is_training_mode)
+
 
         # save the yaml config
         if self.is_rank_zero and self.is_training_mode:
@@ -73,7 +67,7 @@ class Trainer:
             self.optimizer = optim.Adam(self.model.parameters(), lr=self.config.lr)
 
 
-    def _init_model(self, config, mode):
+    def _init_model(self, config, tokenizer, mode):
         def _resume_model(resume_path, device, is_rank_zero):
             try:
                 checkpoints = torch.load(resume_path, map_location=device)
@@ -90,7 +84,7 @@ class Trainer:
 
         # init model and tokenizer
         do_resume = mode == 'resume' or (mode == 'validation' and self.resume_path)
-        model = get_model(config, self.device)
+        model = get_model(config, tokenizer, self.device)
 
         # resume model or resume model after applying peft
         if do_resume:

@@ -2,56 +2,30 @@ import os
 
 import torch
 import torchvision.datasets as dsets
-import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, distributed, random_split
 
 from models import SentimentLSTM
+from tools import IMDbDownloader
 from utils import RANK, LOGGER, colorstr
-from utils.data_utils import DLoader, seed_worker
+from utils.data_utils import DLoader, CustomDLoader, seed_worker
 
 PIN_MEMORY = str(os.getenv('PIN_MEMORY', True)).lower() == 'true'  # global pin_memory for dataloaders
 
 
 
-def get_model(config, device):
-    model = SentimentLSTM(config, config.num_layer, block)
+def get_model(config, tokenizer, device):
+    model = SentimentLSTM(config, tokenizer, device)
     return model.to(device)
 
 
-def build_dataset(config, modes):
-    dataset_dict = {}
-    if config.CIFAR10_train:
-        # set to CIFAR10 size
-        config.width, config.height = 32, 32
-        config.class_num = 10 
-        config.color_channel = 3
-
-        # set augmentations
-        train_aug = transforms.Compose([
-            transforms.RandomCrop(32, padding=4),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-            ])
-        test_aug = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-            ])
-
-        # init train, validation, test sets
-        cifar10_path = config.CIFAR10.path
-        cifar10_valset_proportion = config.CIFAR10.CIFAR10_valset_proportion
-        trainset = dsets.CIFAR10(root=cifar10_path, train=True, download=True, transform=train_aug)
-        valset_l = int(len(trainset) * cifar10_valset_proportion)
-        trainset_l = len(trainset) - valset_l
-        trainset, valset = random_split(trainset, [trainset_l, valset_l])
-        testset = dsets.CIFAR10(root=cifar10_path, train=False, download=True, transform=test_aug)
-        tmp_dsets = {'train': trainset, 'validation': valset, 'test': testset}
-        for mode in modes:
-            dataset_dict[mode] = tmp_dsets[mode]
+def build_dataset(config, tokenizer, modes):
+    if config.IMDb_train:
+        downloader = IMDbDownloader(config)
+        trainset, testset = downloader()
+        tmp_dsets = {'train': trainset, 'validation': testset}
+        dataset_dict = {mode: DLoader(config, tmp_dsets[mode], tokenizer) for mode in modes}
     else:
-        for mode in modes:
-            dataset_dict[mode] = DLoader(config.CUSTOM.get(f'{mode}_data_path'))
+        dataset_dict = {mode: CustomDLoader(config.CUSTOM.get(f'{mode}_data_path')) for mode in modes}
     return dataset_dict
 
 
@@ -73,8 +47,8 @@ def build_dataloader(dataset, batch, workers, shuffle=True, is_ddp=False):
                               generator=generator)
 
 
-def get_data_loader(config, modes, is_ddp=False):
-    datasets = build_dataset(config, modes)
+def get_data_loader(config, tokenizer, modes, is_ddp=False):
+    datasets = build_dataset(config, tokenizer, modes)
     dataloaders = {m: build_dataloader(datasets[m], 
                                        config.batch_size, 
                                        config.workers, 

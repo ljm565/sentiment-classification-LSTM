@@ -5,9 +5,8 @@ import torch.nn.functional as F
 
 
 class SentimentLSTM(nn.Module):
-    def __init__(self, config, pad_token_id, device):
+    def __init__(self, config, tokenizer, device):
         super(SentimentLSTM, self).__init__()
-        self.pad_token_id = pad_token_id
         self.device = device
         self.is_attn = config.is_attn
         self.hidden_size = config.hidden_size
@@ -15,7 +14,7 @@ class SentimentLSTM(nn.Module):
         self.num_layers = config.num_layers
         self.dropout = config.dropout
 
-        self.embedding = nn.Embedding(self.vocab_size, self.hidden_size, padding_idx=self.pad_token_id)
+        self.embedding = nn.Embedding(self.vocab_size, self.hidden_size, padding_idx=tokenizer.pad_token_id)
         self.lstm = nn.LSTM(input_size=self.hidden_size,
                             hidden_size=self.hidden_size,
                             num_layers=self.num_layers,

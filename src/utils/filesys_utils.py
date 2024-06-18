@@ -6,10 +6,15 @@ from utils import LOGGER, colorstr
 
 
 
-def load_dataset(path):
+def read_dataset(path):
     with open(path, 'rb') as f:
         data = pickle.load(f)
     return data
+
+
+def write_dataset(path, obj):
+    with open(path, 'wb') as f:
+        pickle.dump(obj, f)
 
 
 def make_project_dir(config, is_rank_zero=False):

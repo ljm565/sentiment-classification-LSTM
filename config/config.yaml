@@ -19,7 +19,6 @@ dropout: 0.1
 # data config
 workers: 0               # Don't worry to set worker. The number of workers will be set automatically according to the batch size.
 IMDb_train: True         # if True, IMDb will be loaded automatically.
-class_num: 10            # Number of image label classes.
 IMDb:
     path: data/
 CUSTOM:

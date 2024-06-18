@@ -4,6 +4,8 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
+from utils import LOGGER, colorstr
+
 
 
 def seed_worker(worker_id):  # noqa
@@ -14,7 +16,7 @@ def seed_worker(worker_id):  # noqa
 
 
 class DLoader(Dataset):
-    def __init__(self, data, tokenizer, config):
+    def __init__(self, config, data, tokenizer):
         self.data = data
         self.tokenizer = tokenizer
         self.max_len = config.max_len
@@ -36,3 +38,15 @@ class DLoader(Dataset):
     
     def __len__(self):
         return self.length
+    
+
+class CustomDLoader(Dataset):
+    def __init__(self, path):
+        LOGGER.info(colorstr('red', 'Custom dataloader is required..'))
+        raise NotImplementedError
+
+    def __getitem__(self, idx):
+        pass
+    
+    def __len__(self):
+        pass

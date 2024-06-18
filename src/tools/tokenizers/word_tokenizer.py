@@ -1,5 +1,6 @@
 from collections import Counter
-from utils.func_utils import preprocessing, load_dataset
+from utils.func_utils import preprocessing
+from utils.filesys_utils import load_dataset
 
 
 
