@@ -47,12 +47,11 @@ class Trainer:
         self.resume_path = resume_path
 
         # init tokenizer, model, dataset, dataloader, etc.
-        self.modes = ['train', 'validation'] if self.is_training_mode else ['test']
+        self.modes = ['train', 'validation'] if self.is_training_mode else ['validation']
         self.tokenizer = WordTokenizer(self.config)
         self.dataloaders = get_data_loader(self.config, self.tokenizer, self.modes, self.is_ddp)
         self.model = self._init_model(self.config, self.tokenizer, self.mode)
         self.training_logger = TrainingLogger(self.config, self.is_training_mode)
-
 
         # save the yaml config
         if self.is_rank_zero and self.is_training_mode:
@@ -62,7 +61,7 @@ class Trainer:
         
         # init criterion, optimizer, etc.
         self.epochs = self.config.epochs
-        self.criterion = nn.CrossEntropyLoss()
+        self.criterion = nn.BCELoss()
         if self.is_training_mode:
             self.optimizer = optim.Adam(self.model.parameters(), lr=self.config.lr)
 
@@ -155,7 +154,7 @@ class Trainer:
 
         # init progress bar
         if RANK in (-1, 0):
-            logging_header = ['CE Loss', 'Accuracy']
+            logging_header = ['BCE Loss', 'Accuracy']
             pbar = init_progress_bar(train_loader, self.is_rank_zero, logging_header, nb)
 
         for i, (x, y) in pbar:
@@ -164,12 +163,12 @@ class Trainer:
             x, y = x.to(self.device), y.to(self.device)
             
             self.optimizer.zero_grad()
-            output = self.model(x)
+            output, _ = self.model(x)
             loss = self.criterion(output, y)
             loss.backward()
             self.optimizer.step()
 
-            train_acc = (torch.argmax(output, dim=1) == y).float().sum() / batch_size
+            train_acc = ((output > self.config.positive_threshold).float()==y).float().sum() / batch_size
 
             if self.is_rank_zero:
                 self.training_logger.update(
@@ -203,7 +202,7 @@ class Trainer:
 
                 val_loader = self.dataloaders[phase]
                 nb = len(val_loader)
-                logging_header = ['CE Loss', 'Accuracy']
+                logging_header = ['BCE Loss', 'Accuracy']
                 pbar = init_progress_bar(val_loader, self.is_rank_zero, logging_header, nb)
 
                 self.model.eval()
@@ -212,9 +211,9 @@ class Trainer:
                     batch_size = x.size(0)
                     x, y = x.to(self.device), y.to(self.device)
 
-                    output = self.model(x)
+                    output, _ = self.model(x)
                     loss = self.criterion(output, y)
-                    val_acc = (torch.argmax(output, dim=1) == y).float().sum() / batch_size
+                    val_acc = ((output > self.config.positive_threshold).float()==y).float().sum() / batch_size
 
                     self.training_logger.update(
                         phase, 

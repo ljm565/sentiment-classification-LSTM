@@ -1,20 +1,20 @@
 from collections import Counter
 from utils.func_utils import preprocessing
-from utils.filesys_utils import load_dataset
+from utils.filesys_utils import read_dataset
 
 
 
 class WordTokenizer:
-    def __init__(self, config, trainset_path):
+    def __init__(self, config, data_path):
         self.vocab_size = config.vocab_size
-        self.pad_token, self.sos_token, self.unk_token = '[PAD]', '[SOS]', '[UNK]'
-        self.pad_token_id, self.sos_token_id, self.unk_token_id = 0, 1, 2
-        self.word2idx = {self.pad_token: self.pad_token_id, self.sos_token: self.sos_token_id, self.unk_token: self.unk_token_id}
-        self.idx2word = {self.pad_token_id: self.pad_token, self.sos_token_id: self.sos_token, self.unk_token_id: self.unk_token}
+        self.pad_token, self.bos_token, self.unk_token = '[PAD]', '[BOS]', '[UNK]'
+        self.pad_token_id, self.bos_token_id, self.unk_token_id = 0, 1, 2
+        self.word2idx = {self.pad_token: self.pad_token_id, self.bos_token: self.bos_token_id, self.unk_token: self.unk_token_id}
+        self.idx2word = {self.pad_token_id: self.pad_token, self.bos_token_id: self.bos_token, self.unk_token_id: self.unk_token}
 
         # count the word frequency
         self.word_freq = Counter()
-        for s in [d[0].split() for d in load_dataset(trainset_path)]:
+        for s in [d[0].split() for d in read_dataset(data_path)]:
             self.word_freq.update(s)
 
         # update vocab
@@ -33,7 +33,7 @@ class WordTokenizer:
 
 
     def encode(self, s):
-        s = [self.word2idx[self.sos_token]] + [self.word2idx[w] if w in self.word2idx else self.word2idx[self.unk_token] for w in self.tokenize(s)]
+        s = [self.word2idx[self.bos_token]] + [self.word2idx[w] if w in self.word2idx else self.word2idx[self.unk_token] for w in self.tokenize(s)]
         return s
 
 

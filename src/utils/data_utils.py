@@ -17,23 +17,23 @@ def seed_worker(worker_id):  # noqa
 
 class DLoader(Dataset):
     def __init__(self, config, data, tokenizer):
-        self.data = data
         self.tokenizer = tokenizer
         self.max_len = config.max_len
         
         self.text, self.label = [], []
-        for text, label in self.data:
+        for text, label in data:
+            self.text.append(text)
             self.label.append(label)
-            t = self.tokenizer.encode(text)[:self.max_len]
-            t = t + [self.tokenizer.pad_token_id]*(self.max_len-len(t))
-            self.text.append(t)
 
         assert len(self.text) == len(self.label)
         self.length = len(self.label)
 
 
     def __getitem__(self, idx):
-        return torch.LongTensor(self.text[idx]), torch.tensor(self.label[idx], dtype=torch.float)
+        text, label = self.text[idx], self.label[idx]
+        text = self.tokenizer.encode(text)[:self.max_len]
+        text += [self.tokenizer.pad_token_id]*(self.max_len-len(text))
+        return torch.tensor(text, dtype=torch.long), torch.tensor(label, dtype=torch.float)
 
     
     def __len__(self):
