@@ -216,7 +216,7 @@ class Trainer:
             return data4vis
 
         def _append_data_for_vis(**kwargs):
-            for k, v in kwargs:
+            for k, v in kwargs.items():
                 self.data4vis[k].append(v)
 
         with torch.no_grad():
@@ -254,12 +254,12 @@ class Trainer:
 
                     if not is_training_now:
                         _append_data_for_vis(
-                            {'x': x.detach().cpu(),
+                            **{'x': x.detach().cpu(),
                              'y': y.detach().cpu(),
                              'pred': output.detach().cpu()}
                         )
                         if self.config.use_attention:
-                            _append_data_for_vis({'attn': score.detach().cpu()})
+                            _append_data_for_vis(**{'attn': score.detach().cpu()})
 
                 # upadate logs and save model
                 self.training_logger.update_phase_end(phase, printing=True)
@@ -280,6 +280,7 @@ class Trainer:
         all_pred = torch.cat(self.data4vis['pred'], dim=0)
         if self.config.use_attention:
             all_attn = torch.cat(self.data4vis['attn'], dim=0)
+
             vis_save_dir = os.path.join(self.config.save_dir, 'vis_outputs') 
             os.makedirs(vis_save_dir, exist_ok=True)
             visualize_attn(
@@ -304,17 +305,14 @@ class Trainer:
         all_y = torch.cat(self.data4vis['y'], dim=0)
 
         ids = random.sample(range(all_x.size(0)), result_num)
-        all_x = torch.cat([all_x[id].unsqueeze(0) for id in ids], dim=0).to(self.device)
-        all_y = torch.cat([all_y[id].unsqueeze(0) for id in ids], dim=0).to(self.device)
+        all_x = all_x[ids].to(self.device)
+        all_y = all_y[ids].to(self.device)
         output, _ = self.model(all_x)
 
         all_x, all_y, output = all_x.detach().cpu().tolist(), all_y.detach().cpu().tolist(), np.round(output.detach().cpu().tolist(), 3)
         for x, y, pred in zip(all_x, all_y, output):
             LOGGER.info(colorstr(self.tokenizer.decode(x)))
             LOGGER.info('*'*100)
-            if pred >= self.config.positive_threshold:
-                LOGGER.info(f'It is positive with a probability of {pred}')
-            else:
-                LOGGER.info(f'It is negative with a probability of {1-pred}')
+            LOGGER.info(f'It is positive with a probability of {pred}')
             LOGGER.info(f'ground truth: {y}')
             LOGGER.info('*'*100 + '\n'*2)
