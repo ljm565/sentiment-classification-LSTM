@@ -275,23 +275,18 @@ class Trainer:
 
         # validation
         self.epoch_validate(phase, 0, False)
-        all_x = torch.cat(self.data4vis['x'], dim=0)
-        all_y = torch.cat(self.data4vis['y'], dim=0)
-        all_pred = torch.cat(self.data4vis['pred'], dim=0)
         if self.config.use_attention:
-            all_attn = torch.cat(self.data4vis['attn'], dim=0)
-
             vis_save_dir = os.path.join(self.config.save_dir, 'vis_outputs') 
             os.makedirs(vis_save_dir, exist_ok=True)
             visualize_attn(
                 vis_save_dir, 
-                all_x, 
-                all_y, 
-                all_pred, 
-                all_attn, 
+                self.data4vis,
                 self.tokenizer, 
-                self.config.positive_threshold
+                self.config.positive_threshold,
+                result_num
             )
+        else:
+            LOGGER.warning(colorstr('yellow', 'Your model does not have attention module..'))
 
 
     def print_prediction_results(self, phase, result_num):
