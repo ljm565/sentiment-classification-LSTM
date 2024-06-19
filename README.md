@@ -71,10 +71,10 @@ LSTM 기반 감성 분류 모델과 이 모델의 attention에 대한 설명은 
 ## 결과
 * ### Sentiment Classification LSTM Attention 사용 모델 결과
     * Loss History<br>
-    <img src="images/output1.jpg" width="80%"><br><br>
+    <img src="docs/figs/output1.jpg" width="80%"><br><br>
 
     * Accuracy History<br>
-    <img src="images/output3.jpg" width="80%"><br><br>
+    <img src="docs/figs/output3.jpg" width="80%"><br><br>
     Attention 사용한 모델: 0.884720<br><br>
 
     * 감성 분류 결과 샘플 (ground truth: 1.0 (positive), 0.0 (negative))<br>
@@ -98,10 +98,10 @@ LSTM 기반 감성 분류 모델과 이 모델의 attention에 대한 설명은 
 
 * ### Sentiment Classification LSTM Attention 사용하지 않은 모델 결과
     * Loss History<br>
-    <img src="images/output2.jpg" width="80%"><br><br>
+    <img src="docs/figs/output2.jpg" width="80%"><br><br>
 
     * Accuracy History<br>
-    <img src="images/output4.jpg" width="80%"><br><br>
+    <img src="docs/figs/output4.jpg" width="80%"><br><br>
     Attention 사용하지 않은 모델: 0.883560<br><br>
 
     * 감성 분류 결과 샘플 (ground truth: 1.0 (positive), 0.0 (negative))<br>
