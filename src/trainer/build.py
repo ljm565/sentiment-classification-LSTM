@@ -1,13 +1,11 @@
 import os
 
 import torch
-import torchvision.datasets as dsets
-from torch.utils.data import DataLoader, distributed, random_split
+from torch.utils.data import DataLoader, distributed
 
 from models import SentimentLSTM
-from tools import IMDbDownloader
-from utils import RANK, LOGGER, colorstr
-from utils.data_utils import DLoader, CustomDLoader, seed_worker
+from utils import RANK
+from utils.data_utils import DLoader, CustomDLoader, seed_worker, imdb_download
 
 PIN_MEMORY = str(os.getenv('PIN_MEMORY', True)).lower() == 'true'  # global pin_memory for dataloaders
 
@@ -20,8 +18,7 @@ def get_model(config, tokenizer, device):
 
 def build_dataset(config, tokenizer, modes):
     if config.IMDb_train:
-        downloader = IMDbDownloader(config)
-        trainset, testset = downloader()
+        trainset, testset = imdb_download(config)
         tmp_dsets = {'train': trainset, 'validation': testset}
         dataset_dict = {mode: DLoader(config, tmp_dsets[mode], tokenizer) for mode in modes}
     else:

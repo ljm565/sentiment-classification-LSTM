@@ -32,6 +32,7 @@ class IMDbDownloader:
 
     def preprocessing_data(self, read_path, write_path):        
         # data pre-processing
+        os.makedirs(os.path.dirname(write_path), exist_ok=True)
         data = read_dataset(read_path)
         processed_data = [[preprocessing(d['text']), d['label']] for d in data]
         write_dataset(write_path, processed_data)
@@ -50,6 +51,8 @@ class IMDbDownloader:
         if not (self.is_exist(pp_trainset_path) and self.is_exist(pp_testset_path)):
             if not (self.is_exist(raw_trainset_path) and self.is_exist(raw_testset_path)):
                 LOGGER.info('Downloading IMDb dataset..')
+                os.makedirs(os.path.dirname(raw_trainset_path), exist_ok=True)
+                os.makedirs(os.path.dirname(raw_testset_path), exist_ok=True)
                 for split, path in zip(self.splits, [raw_trainset_path, raw_testset_path]):
                     self.download('imdb', split, path)
 

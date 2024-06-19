@@ -2,6 +2,7 @@ import gc
 import sys
 import time
 import random
+import numpy as np
 
 import torch
 import torch.nn as nn
@@ -14,6 +15,8 @@ from trainer.build import get_model, get_data_loader
 from utils import RANK, LOGGER, colorstr, init_seeds
 from utils.filesys_utils import *
 from utils.training_utils import *
+from utils.data_utils import imdb_download
+from utils.func_utils import visualize_attn
 
 
 
@@ -68,8 +71,8 @@ class Trainer:
 
     def _init_tokenizer(self, config):
         if config.IMDb_train:
-            trainset_path = os.path.join(config.IMDb.path, 'IMDb/processed/imdb.train')
-            tokenizer = WordTokenizer(config, trainset_path)
+            trainset, _ = imdb_download(config)
+            tokenizer = WordTokenizer(config, trainset)
         else:
             # NOTE: You need train data to build custom word tokenizer
             trainset_path = config.CUSTOM.train_data_path
@@ -206,11 +209,20 @@ class Trainer:
             epoch: int,
             is_training_now=True
         ):
-        
+        def _init_log_data_for_vis():
+            data4vis = {'x': [], 'y': [], 'pred': []}
+            if self.config.use_attention:
+                data4vis.update({'attn': []})
+            return data4vis
+
+        def _append_data_for_vis(**kwargs):
+            for k, v in kwargs:
+                self.data4vis[k].append(v)
+
         with torch.no_grad():
             if self.is_rank_zero:
                 if not is_training_now:
-                    self.all_data, self.gt, self.ids = [], [], set()
+                    self.data4vis = _init_log_data_for_vis()
 
                 val_loader = self.dataloaders[phase]
                 nb = len(val_loader)
@@ -223,7 +235,7 @@ class Trainer:
                     batch_size = x.size(0)
                     x, y = x.to(self.device), y.to(self.device)
 
-                    output, _ = self.model(x)
+                    output, score = self.model(x)
                     loss = self.criterion(output, y)
                     val_acc = ((output > self.config.positive_threshold).float()==y).float().sum() / batch_size
 
@@ -241,8 +253,13 @@ class Trainer:
                     pbar.set_description(('%15s' * 1 + '%15.4g' * len(loss_log)) % msg)
 
                     if not is_training_now:
-                        self.all_data.append(x.detach().cpu())
-                        self.gt.append(y.detach().cpu())
+                        _append_data_for_vis(
+                            {'x': x.detach().cpu(),
+                             'y': y.detach().cpu(),
+                             'pred': output.detach().cpu()}
+                        )
+                        if self.config.use_attention:
+                            _append_data_for_vis({'attn': score.detach().cpu()})
 
                 # upadate logs and save model
                 self.training_logger.update_phase_end(phase, printing=True)
@@ -251,19 +268,53 @@ class Trainer:
                     self.training_logger.save_logs(self.save_dir)
         
 
-    def cal_acc(self, phase, result_num):
-        if result_num > len(self.dataloaders['test'].dataset):
+    def vis_attention(self, phase, result_num):
+        if result_num > len(self.dataloaders[phase].dataset):
             LOGGER.info(colorstr('red', 'The number of results that you want to see are larger than total test set'))
             sys.exit()
 
+        # validation
         self.epoch_validate(phase, 0, False)
-        self.all_data = torch.cat(self.all_data, dim=0)
-        self.gt = torch.cat(self.gt, dim=0)
+        all_x = torch.cat(self.data4vis['x'], dim=0)
+        all_y = torch.cat(self.data4vis['y'], dim=0)
+        all_pred = torch.cat(self.data4vis['pred'], dim=0)
+        if self.config.use_attention:
+            all_attn = torch.cat(self.data4vis['attn'], dim=0)
+            vis_save_dir = os.path.join(self.config.save_dir, 'vis_outputs') 
+            os.makedirs(vis_save_dir, exist_ok=True)
+            visualize_attn(
+                vis_save_dir, 
+                all_x, 
+                all_y, 
+                all_pred, 
+                all_attn, 
+                self.tokenizer, 
+                self.config.positive_threshold
+            )
 
-        ids = random.sample(range(self.all_data.size(0)), result_num)
-        test_samples = torch.cat([self.all_data[id].unsqueeze(0) for id in ids], dim=0).to(self.device)
-        test_samples_gt = torch.cat([self.gt[id].unsqueeze(0) for id in ids], dim=0).tolist()
-        output = self.model(test_samples)
-        output = torch.argmax(output, dim=1).tolist()
-        LOGGER.info('ground truth: {}'.format(test_samples_gt))
-        LOGGER.info('prediction  : {}'.format(output))
+
+    def print_prediction_results(self, phase, result_num):
+        if result_num > len(self.dataloaders[phase].dataset):
+            LOGGER.info(colorstr('red', 'The number of results that you want to see are larger than total test set'))
+            sys.exit()
+
+        # validation
+        self.epoch_validate(phase, 0, False)
+        all_x = torch.cat(self.data4vis['x'], dim=0)
+        all_y = torch.cat(self.data4vis['y'], dim=0)
+
+        ids = random.sample(range(all_x.size(0)), result_num)
+        all_x = torch.cat([all_x[id].unsqueeze(0) for id in ids], dim=0).to(self.device)
+        all_y = torch.cat([all_y[id].unsqueeze(0) for id in ids], dim=0).to(self.device)
+        output, _ = self.model(all_x)
+
+        all_x, all_y, output = all_x.detach().cpu().tolist(), all_y.detach().cpu().tolist(), np.round(output.detach().cpu().tolist(), 3)
+        for x, y, pred in zip(all_x, all_y, output):
+            LOGGER.info(colorstr(self.tokenizer.decode(x)))
+            LOGGER.info('*'*100)
+            if pred >= self.config.positive_threshold:
+                LOGGER.info(f'It is positive with a probability of {pred}')
+            else:
+                LOGGER.info(f'It is negative with a probability of {1-pred}')
+            LOGGER.info(f'ground truth: {y}')
+            LOGGER.info('*'*100 + '\n'*2)

@@ -1,3 +1,4 @@
+import os
 import re
 import random
 import matplotlib.pyplot as plt
@@ -10,7 +11,7 @@ def preprocessing(s):
     return s
 
 
-def visualize_attn(all_x, all_y, all_pred, all_attn, tokenizer):
+def visualize_attn(path, all_x, all_y, all_pred, all_attn, tokenizer, positive_threshold):
     all_x = all_x.detach().cpu().numpy()
     all_y = all_y.detach().cpu().numpy()
     all_pred = all_pred.detach().cpu().numpy()
@@ -19,7 +20,7 @@ def visualize_attn(all_x, all_y, all_pred, all_attn, tokenizer):
 
     for i, (x, y, p) in enumerate(zip(all_x.tolist(), all_y.tolist(), all_pred.tolist())):
         try:
-            if len(tokenizer.decode(x).split()) < 20 and ((y == 1 and p >= 0.5) or (y == 0 and p < 0.5)):
+            if len(tokenizer.decode(x).split()) < 20 and ((y == 1 and p >= positive_threshold) or (y == 0 and p < positive_threshold)):
                 idx.append(i)
         except ValueError:
             continue
@@ -35,4 +36,5 @@ def visualize_attn(all_x, all_y, all_pred, all_attn, tokenizer):
     plt.title('Attention Score ({} review)'.format(sentiment[int(y)]), fontsize=20)
     plt.bar(idx, score)
     plt.xticks(idx, sentence)
-    plt.savefig('result/attention_score.jpg')
+    plt.tight_layout()
+    plt.savefig(os.path.join(path, 'attention_score.jpg'))

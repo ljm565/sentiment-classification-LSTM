@@ -1,11 +1,10 @@
 from collections import Counter
 from utils.func_utils import preprocessing
-from utils.filesys_utils import read_dataset
 
 
 
 class WordTokenizer:
-    def __init__(self, config, data_path):
+    def __init__(self, config, data):
         self.vocab_size = config.vocab_size
         self.pad_token, self.bos_token, self.unk_token = '[PAD]', '[BOS]', '[UNK]'
         self.pad_token_id, self.bos_token_id, self.unk_token_id = 0, 1, 2
@@ -14,7 +13,7 @@ class WordTokenizer:
 
         # count the word frequency
         self.word_freq = Counter()
-        for s in [d[0].split() for d in read_dataset(data_path)]:
+        for s in [d[0].split() for d in data]:
             self.word_freq.update(s)
 
         # update vocab

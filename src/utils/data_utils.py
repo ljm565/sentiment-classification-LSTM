@@ -4,8 +4,15 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
+from tools import IMDbDownloader
 from utils import LOGGER, colorstr
 
+
+
+def imdb_download(config):
+    downloader = IMDbDownloader(config)
+    trainset, testset = downloader()
+    return trainset, testset
 
 
 def seed_worker(worker_id):  # noqa
