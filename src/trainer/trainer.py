@@ -48,7 +48,7 @@ class Trainer:
 
         # init tokenizer, model, dataset, dataloader, etc.
         self.modes = ['train', 'validation'] if self.is_training_mode else ['validation']
-        self.tokenizer = WordTokenizer(self.config)
+        self.tokenizer = self._init_tokenizer(self.config)
         self.dataloaders = get_data_loader(self.config, self.tokenizer, self.modes, self.is_ddp)
         self.model = self._init_model(self.config, self.tokenizer, self.mode)
         self.training_logger = TrainingLogger(self.config, self.is_training_mode)
@@ -65,6 +65,18 @@ class Trainer:
         if self.is_training_mode:
             self.optimizer = optim.Adam(self.model.parameters(), lr=self.config.lr)
 
+
+    def _init_tokenizer(self, config):
+        if config.IMDb_train:
+            trainset_path = os.path.join(config.IMDb.path, 'IMDb/processed/imdb.train')
+            tokenizer = WordTokenizer(config, trainset_path)
+        else:
+            # NOTE: You need train data to build custom word tokenizer
+            trainset_path = config.CUSTOM.train_data_path
+            LOGGER.info(colorstr('red', 'You need train data to build custom word tokenizer..'))
+            raise NotImplementedError
+        return tokenizer
+    
 
     def _init_model(self, config, tokenizer, mode):
         def _resume_model(resume_path, device, is_rank_zero):

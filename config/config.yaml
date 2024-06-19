@@ -15,6 +15,7 @@ vocab_size: 10000
 max_len: 512
 hidden_dim: 768
 dropout: 0.1
+use_attention: True
 
 # data config
 workers: 0               # Don't worry to set worker. The number of workers will be set automatically according to the batch size.
@@ -30,8 +31,7 @@ CUSTOM:
 # train config
 batch_size: 128
 epochs: 100
-lr0: 1e-4
-patient: 4
+lr: 1e-4
 
 # prediction config
 result_num: 10            # number of prediction results to be shown

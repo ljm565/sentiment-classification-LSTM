@@ -8,23 +8,23 @@ class SentimentLSTM(nn.Module):
     def __init__(self, config, tokenizer, device):
         super(SentimentLSTM, self).__init__()
         self.device = device
-        self.is_attn = config.is_attn
-        self.hidden_size = config.hidden_size
+        self.use_attention = config.use_attention
+        self.hidden_dim = config.hidden_dim
         self.vocab_size = config.vocab_size
-        self.num_layers = config.num_layers
+        self.num_layer = config.num_layer
         self.dropout = config.dropout
 
-        self.embedding = nn.Embedding(self.vocab_size, self.hidden_size, padding_idx=tokenizer.pad_token_id)
-        self.lstm = nn.LSTM(input_size=self.hidden_size,
-                            hidden_size=self.hidden_size,
-                            num_layers=self.num_layers,
+        self.embedding = nn.Embedding(self.vocab_size, self.hidden_dim, padding_idx=tokenizer.pad_token_id)
+        self.lstm = nn.LSTM(input_size=self.hidden_dim,
+                            hidden_size=self.hidden_dim,
+                            num_layers=self.num_layer,
                             batch_first=True,
                             dropout=self.dropout,
                             bidirectional=True)
-        if self.is_attn:
-            self.attention = Attention(self.hidden_size*2)
+        if self.use_attention:
+            self.attention = Attention(self.hidden_dim*2)
         self.fc = nn.Sequential(
-            nn.Linear(self.hidden_size*2, 1),
+            nn.Linear(self.hidden_dim*2, 1),
             nn.Sigmoid()
         )
         self.relu = nn.ReLU()
@@ -32,8 +32,8 @@ class SentimentLSTM(nn.Module):
 
 
     def init_hidden(self):
-        h0 = torch.zeros(self.num_layers*2, self.batch_size, self.hidden_size).to(self.device)
-        c0 = torch.zeros(self.num_layers*2, self.batch_size, self.hidden_size).to(self.device)
+        h0 = torch.zeros(self.num_layer*2, self.batch_size, self.hidden_dim).to(self.device)
+        c0 = torch.zeros(self.num_layer*2, self.batch_size, self.hidden_dim).to(self.device)
         return h0, c0
 
 
@@ -44,7 +44,7 @@ class SentimentLSTM(nn.Module):
 
         x = self.embedding(x)
         x, _ = self.lstm(x, (h0, c0))
-        if self.is_attn:
+        if self.use_attention:
             attn_output = self.attention(self.relu(x))
             x = x * attn_output.unsqueeze(-1)
         x = torch.sum(x, dim=1)
@@ -55,14 +55,14 @@ class SentimentLSTM(nn.Module):
 
 
 class Attention(nn.Module):
-    def __init__(self, hidden_size):
+    def __init__(self, hidden_dim):
         super(Attention, self).__init__()
-        self.hidden_size = hidden_size
+        self.hidden_dim = hidden_dim
 
         self.attention = nn.Sequential(
-            nn.Linear(self.hidden_size, int(self.hidden_size/2)),
+            nn.Linear(self.hidden_dim, int(self.hidden_dim/2)),
             nn.ReLU(),
-            nn.Linear(int(self.hidden_size/2), 1)
+            nn.Linear(int(self.hidden_dim/2), 1)
         )
 
 
