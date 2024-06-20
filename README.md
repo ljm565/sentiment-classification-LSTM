@@ -139,7 +139,7 @@ Model w/o attention: 0.883560<br><br>
 <br><br>
 
 
-### Sentiment Classification Attention Score 결과
+### Sentiment Classification Attention Score Results
 * Positive review attention score sample<br>
 <img src="docs/figs/pos.jpg" width="80%"><br><br>
 
