@@ -86,10 +86,10 @@ LSTM 감성 분류 모델 학습을 위해서 다음 과정을 따라주시기 �
 ## Training Results
 ### Sentiment Classification Results of LSTM w/ Attention
 * Loss History<br>
-<img src="docs/figs/output1.jpg" width="80%"><br><br>
+<img src="figs/output1.jpg" width="80%"><br><br>
 
 * Accuracy History<br>
-<img src="docs/figs/output3.jpg" width="80%"><br><br>
+<img src="figs/output3.jpg" width="80%"><br><br>
 Model w/ attention: 0.884720<br><br>
 
 * Samples of sentiment prediction (ground truth: 1.0 (positive), 0.0 (negative))<br>
@@ -113,10 +113,10 @@ Model w/ attention: 0.884720<br><br>
 
 ### Sentiment Classification Results of LSTM w/o Attention
 * Loss History<br>
-<img src="docs/figs/output2.jpg" width="80%"><br><br>
+<img src="figs/output2.jpg" width="80%"><br><br>
 
 * Accuracy History<br>
-<img src="docs/figs/output4.jpg" width="80%"><br><br>
+<img src="figs/output4.jpg" width="80%"><br><br>
 Model w/o attention: 0.883560<br><br>
 
 * Samples of sentiment prediction (ground truth: 1.0 (positive), 0.0 (negative))<br>
@@ -139,10 +139,10 @@ Model w/o attention: 0.883560<br><br>
 
 ### Sentiment Classification Attention Score 결과
 * Positive review attention score sample<br>
-<img src="docs/figs/pos.jpg" width="80%"><br><br>
+<img src="figs/pos.jpg" width="80%"><br><br>
 
 * Negative review attention score sample<br>
-<img src="docs/figs/neg.jpg" width="80%"><br><br>
+<img src="figs/neg.jpg" width="80%"><br><br>
 
 
 
