@@ -19,8 +19,8 @@ use_attention: True
 
 # data config
 workers: 0               # Don't worry to set worker. The number of workers will be set automatically according to the batch size.
-IMDb_train: True         # if True, IMDb will be loaded automatically.
 positive_threshold: 0.5  # The predicted values range between 0 and 1. If a predicted value is higher than the threshold, it is classified as positive.
+IMDb_train: True         # if True, IMDb will be loaded automatically.
 IMDb:
     path: data/
 CUSTOM:
