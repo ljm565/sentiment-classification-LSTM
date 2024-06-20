@@ -59,12 +59,12 @@ python3 src/run/train.py --config config/config.yaml --mode train
     |   └── training_logger.py        <- Training logger class 파일
     |
     ├── trainer                 
-    |   ├── build.py            <- Dataset, dataloader 등을 정의하는 파일
-    |   └── trainer.py          <- 학습, 평가, accuracy 계산 class 파일
+    |   ├── build.py                  <- Dataset, dataloader 등을 정의하는 파일
+    |   └── trainer.py                <- 학습, 평가, accuracy 계산 class 파일
     |
     └── uitls                   
-        ├── __init__.py         <- Logger, 버전 등을 초기화 하는 파일etc.
-        ├── data_utils.py       <- Custom dataloader 파일
+        ├── __init__.py               <- Logger, 버전 등을 초기화 하는 파일etc.
+        ├── data_utils.py             <- Custom dataloader 파일
         ├── filesys_utils.py       
         ├── func_utils.py       
         └── training_utils.py     

@@ -59,12 +59,12 @@ This repository is structured as follows.
     |   └── training_logger.py        <- Training logger class file
     |
     ├── trainer                 
-    |   ├── build.py            <- Codes for initializing dataset, dataloader, etc.
-    |   └── trainer.py          <- Class for training, evaluating, and calculating accuracy
+    |   ├── build.py                  <- Codes for initializing dataset, dataloader, etc.
+    |   └── trainer.py                <- Class for training, evaluating, and calculating accuracy
     |
     └── uitls                   
-        ├── __init__.py         <- File for initializing the logger, versioning, etc.
-        ├── data_utils.py       <- File defining the custom dataset dataloader
+        ├── __init__.py               <- File for initializing the logger, versioning, etc.
+        ├── data_utils.py             <- File defining the custom dataset dataloader
         ├── filesys_utils.py       
         ├── func_utils.py       
         └── training_utils.py     
