@@ -298,13 +298,14 @@ class Trainer:
         self.epoch_validate(phase, 0, False)
         all_x = torch.cat(self.data4vis['x'], dim=0)
         all_y = torch.cat(self.data4vis['y'], dim=0)
+        all_pred = torch.cat(self.data4vis['pred'], dim=0)
 
         ids = random.sample(range(all_x.size(0)), result_num)
-        all_x = all_x[ids].to(self.device)
-        all_y = all_y[ids].to(self.device)
-        output, _ = self.model(all_x)
+        all_x = all_x[ids]
+        all_y = all_y[ids]
+        all_pred = all_pred[ids]
 
-        all_x, all_y, output = all_x.detach().cpu().tolist(), all_y.detach().cpu().tolist(), np.round(output.detach().cpu().tolist(), 3)
+        all_x, all_y, output = all_x.tolist(), all_y.tolist(), np.round(output.tolist(), 3)
         for x, y, pred in zip(all_x, all_y, output):
             LOGGER.info(colorstr(self.tokenizer.decode(x)))
             LOGGER.info('*'*100)
