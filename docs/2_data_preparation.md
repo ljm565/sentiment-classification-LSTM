@@ -19,7 +19,7 @@ CUSTOM:
 If you want to train your custom dataset, set the `IMDb_train` value in the `config/config.yaml` file to `False` as follows.
 You may require to implement your custom dataloader codes in `src/utils/data_utils.py`.
 ```yaml
-IMDb_train: True       
+IMDb_train: False       
 IMDb:
     path: data/
 CUSTOM:
