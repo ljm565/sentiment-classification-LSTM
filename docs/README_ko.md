@@ -63,7 +63,7 @@ python3 src/run/train.py --config config/config.yaml --mode train
     |   └── trainer.py                <- 학습, 평가, accuracy 계산 class 파일
     |
     └── uitls                   
-        ├── __init__.py               <- Logger, 버전 등을 초기화 하는 파일etc.
+        ├── __init__.py               <- Logger, 버전 등을 초기화 하는 파일
         ├── data_utils.py             <- Custom dataloader 파일
         ├── filesys_utils.py       
         ├── func_utils.py       
