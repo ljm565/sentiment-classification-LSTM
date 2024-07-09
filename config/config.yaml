@@ -10,7 +10,7 @@ project: outputs/lstm_w_attention
 name: IMDb
 
 # model config
-num_layer: 3              # Number of each residual block's layer. A model consisting of a total of (num_layer * 2 * 3 + 2) layers will be created.
+num_layer: 3             # Number of LSTM layers.
 vocab_size: 10000
 max_len: 512
 hidden_dim: 768
